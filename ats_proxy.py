@@ -3,18 +3,10 @@ import thread
 import re
 
 BUFFSIZE	= 8192
-HOST 	= '127.0.0.1'
-PORT 	= 5544 
-REGEX 	= re.compile( '.+\r\ncontent-length\s*:\s*' , re.IGNORECASE|re.DOTALL)
-
-#def get_cont_len(data):
-	#if re.search( 'content-length' , data , re.I ):
-		#REGEX 		= re.compile( '.+\r\ncontent-length\s*:\s*' , re.I) 
-		#data0 	= REGEX.sub( '' , data) 
-		#return int(data0.split('\r\n')[0] )
-	#else:
-		#print data0
-		#return 0
+HOST 		= '127.0.0.1'
+PORT 		= 5544 
+REGEX 		= re.compile( '.+\r\ncontent-length\s*:\s*' , re.IGNORECASE|re.DOTALL)
+HOST_ATS	= '198.143.12.140'
 
 def get_cont_len(data):
 	chunk 	= REGEX.sub( '' , data)
@@ -33,11 +25,6 @@ def handler(src_sock , dest_sock):
 			dest_sock.sendall(data)
 		except:
 			break
-	#buff 		= bytearray(BUFFSIZE)
-	#n=1
-	#while n:
-		#n=src_sock.recv_into(buff)
-		#dest_sock.sendall( buff )
  
 if __name__=='__main__':
 	ADDR = (HOST, PORT)
@@ -46,10 +33,10 @@ if __name__=='__main__':
 	serversock.bind(ADDR)
 	serversock.listen(5)
 	while 1:
-		try		:	ua_sock, addr	= serversock.accept()
+		try	:	ua_sock, addr	= serversock.accept()
 		except	:	break
-		ats_sock 		= socket( AF_INET, SOCK_STREAM)
-		ats_sock.connect( ("rocktech" , 54320) )
+		ats_sock = socket( AF_INET, SOCK_STREAM)
+		ats_sock.connect( (HOST_ATS , 54320) )
 		#print '...connected from:', addr
 		thread.start_new_thread(handler, (ua_sock, ats_sock))
 		thread.start_new_thread(handler, (ats_sock ,ua_sock ))
